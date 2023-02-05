@@ -2,9 +2,18 @@
 import express, { json } from "express";
 import mysql from "mysql2";
 import cors from "cors";
-const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
-const HOST = process.env.HOST || '0.0.0.0';
-const PORT = process.env.PORT || 3003;
+
+import { createServer } from 'http';
+
+createServer((req, res) => {
+  res.write('Hello World!');
+  res.end();
+}).listen(process.env.PORT);
+
+
+// const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
+// const HOST = process.env.HOST || '0.0.0.0';
+// const PORT = process.env.PORT || 3003;
 
 const db = mysql.createConnection({
     host:"containers-us-west-199.railway.app",
