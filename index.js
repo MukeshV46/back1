@@ -1,3 +1,4 @@
+
 import  express from "express";
 import mysql from "mysql2";
 import cors from "cors";
@@ -67,4 +68,4 @@ app.put("/data/:id",(req,res)=>{
 
 app.listen(8000,()=>{
     console.log("COnnected server");
-}) 
+})
