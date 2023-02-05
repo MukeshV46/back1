@@ -3,9 +3,9 @@ import mysql from "mysql2";
 import cors from "cors";
 
 const db = mysql.createConnection({
-    host:"containers-us-west-194.railway.app",
+    host:"containers-us-west-199.railway.app",
     user:"root",
-    password:"tafOEqJlP2BOmZo3mt5C",
+    password:"FkFZ9pemtdV0qjoGNzaa",
     database:"railway"
 })
 const app =  express();
