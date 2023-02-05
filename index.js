@@ -22,9 +22,7 @@ const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 3003;
 
-app.listen(process.env.Port || PORT ,()=>{
-    console.log("Connected to server");
-})
+
 
 
 app.use(express.json());
@@ -114,3 +112,7 @@ app.post("/add", (req, res) => {
     });
   })
 
+app.listen(process.env.Port || PORT ,()=>{
+    console.log("Connected to server");
+    console.log(db)
+})
