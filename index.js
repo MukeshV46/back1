@@ -3,17 +3,11 @@ import express, { json } from "express";
 import mysql from "mysql2";
 import cors from "cors";
 
-import { createServer } from 'http';
-
-createServer((req, res) => {
-  res.write('Hello World!');
-  res.end();
-}).listen(process.env.PORT);
 
 
-// const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
-// const HOST = process.env.HOST || '0.0.0.0';
-// const PORT = process.env.PORT || 3003;
+
+
+
 
 const db = mysql.createConnection({
     host:"containers-us-west-199.railway.app",
@@ -23,6 +17,13 @@ const db = mysql.createConnection({
 })
 const app =  express();
 
+const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || 3003;
+
+app.listen(process.env.Port || PORT ,()=>{
+    console.log("Connected to server");
+})
 
 
 app.use(express.json());
@@ -112,6 +113,3 @@ app.post("/add", (req, res) => {
     });
   })
 
-app.listen("3003",()=>{
-    console.log("Connected to server");
-})
