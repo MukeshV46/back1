@@ -1,71 +1,108 @@
 
-import  express from "express";
+import express, { json } from "express";
 import mysql from "mysql2";
 import cors from "cors";
-const app = express()
-const db =   mysql.createConnection({
-    host:"localhost",    
-    user:"root",
-    password:"#Good2002",
-    database:"test"
-})
+const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json()); //To convert json data
+const db = mysql.createConnection({
+    host:"containers-us-west-199.railway.app",
+    user:"root",
+    password:"FkFZ9pemtdV0qjoGNzaa",
+    database:"railway"
+})
+const app =  express();
+
+
+
+app.use(express.json());
 app.use(cors());
 
 app.get("/",(req,res)=>{
-     res.json("Home page get"+res.status)
-})
-
-app.get("/data",(req,res)=>{
-    const q = "SELECT * from data2"
-    db.query(q,(err,data)=>{
-        if(err) return (res.json(err));
-        return res.json(data);
-    })
-});
-
-
-
-
-app.post("/data",(req,res)=>{    
-    const val = [            
-            req.body.u_name,            
-            req.body.mbl_no,            
-    ];
-    console.log(val);
-    const q = "INSERT INTO data2 (`u_name`,`mbl_no`) VALUES (?)";
-    // const q = "INSERT INTO data (`id`,`u_name`,`mbl_no`) VALUES (8,'jada',919)";
-    db.query(q,[val],(err,data)=>{
-        if(err) return res.json(err);//("Your ID should be unique");
-        return res.json("Your Data is added");
-    })
+    res.json("Home page get"+res.status)
 })
 
 
-app.delete("/data/:id",(req,res)=>{
+
+app.get('/data', (req, res) => {
+    const q1 = "SELECT * from employee";
+    db.query(q1, (err, data1) => {
+      if (err) return res.json(err);
+  
+      const q2 = "SELECT * from salary";
+      db.query(q2, (err, data2) => {
+        if (err) return res.json(err);
+  
+        const combined = { employees: data1, salary: data2 };
+        return res.json(combined);
+      });
+    });
+  });
+  
+
+app.post("/add", (req, res) => {
+    let counter = 0;
+  
+    const q = "INSERT INTO employee (`Name`,`Address`,`Sex`,`Martial`) VALUES (?)";
+    const val = [req.body.Name, req.body.Sex, req.body.Martial, req.body.Address]; //["Kathir","Mdu","Male","Single"];
+    const q2 = "INSERT INTO salary (`Dep`,`Amount`) Values (?)"; //["UI/UX",5000];
+    const val2 = [req.body.Dep, req.body.Amount];
+  
+    db.query(q, [val], (err, data) => {
+      if (err) return res.json(err);
+      console.log("Added employee Sucessfully");
+      counter++;
+      if (counter === 2) return res.json();
+    });
+  
+    db.query(q2, [val2], (err, data) => {
+      if (err) return res.json(err);
+      console.log("Added salary Sucessfully");
+      counter++;
+      if (counter === 2) return res.json();
+    });
+  });
+  
+//----------------------
+  app.delete("/add/:id", (req, res) => {        
     const id = req.params.id;
-    const q =  "DELETE  FROM data2 where id = ?";
-    db.query(q ,[id], (err,data)=>{
-        if(err) return (res.json(err));
-        return res.json("Book deleted Sucessfully");
-    })
-})
+    const q1 = "DELETE FROM employee WHERE id = ?";
+    const q2 = "DELETE FROM salary WHERE id = ?";
+    db.query(q1, [id], (err, data) => {
+      if (err) return res.json(err);
+      db.query(q2, [id], (err, data) => {
+        if (err) return res.json(err);
+        console.log("Data deleted successfully");
+        return res.json("Data deleted successfully");
+      });
+    });
+  });
 
-app.put("/data/:id",(req,res)=>{
-    const id = req.params.id;
-    const values = [
-        req.body.u_name,            
-        req.body.mbl_no,            
-    ]
-    const q = "UPDATE data2 SET `u_name` = ? , `mbl_no` = ? WHERE id = ?";
-    db.query(q,[...values,id],(err,data)=>{
-        if(err) return (res.json(err));
-        return res.json("Book Updated Sucessfully")
-    }) 
-})
+  //---------------------
+  app.put("/up/:id",(req,res)=>{
+      const id =  req.params.id;  
+      const val = [req.body.Name, req.body.Sex, req.body.Martial, req.body.Address]; 
+      const val2 = [req.body.Dep, req.body.Amount];    
+     let counter=0;
+    const q = "UPDATE employee SET `Name` = ? , `Sex` = ?, `Martial` = ?, `Address` = ? WHERE id = ?";    
+    const q2 = "UPDATE salary SET `Dep` = ? , `Amount` = ? WHERE id = ?";    
 
+    db.query(q, [...val,id], (err, data) => {
+      if (err) return res.json(err);
+      console.log("Updated employee Sucessfully");
+      counter++;
+      if (counter === 2) return res.json(); 
+    });
+  
+    db.query(q2, [...val2,id], (err, data) => {
+      if (err) return res.json(err);
+      console.log("Updated salary Sucessfully");
+      counter++;
+      if (counter === 2) return res.json();
+    });
+  })
 
-app.listen(8000,()=>{
-    console.log("COnnected server");
+app.listen("3000",()=>{
+    console.log("Connected to server");
 })
