@@ -1,19 +1,18 @@
 import express, { json } from "express";
 import mysql from "mysql2";
 import cors from "cors";
-const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
-const HOST = process.env.HOST || '0.0.0.0';
-const PORT = process.env.PORT || 3000;
 
 const db = mysql.createConnection({
     host:"containers-us-west-199.railway.app",
     user:"root",
     password:"FkFZ9pemtdV0qjoGNzaa",
-    database:"railway"
+    database:"railway",
+    port:6463
 })
 const app =  express();
-
-
+const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || 3003;
 
 app.use(express.json());
 app.use(cors());
@@ -44,7 +43,7 @@ app.post("/add", (req, res) => {
     let counter = 0;
   
     const q = "INSERT INTO employee (`Name`,`Address`,`Sex`,`Martial`) VALUES (?)";
-    const val = [req.body.Name, req.body.Sex, req.body.Martial, req.body.Address]; //["Kathir","Mdu","Male","Single"];
+    const val = [req.body.Name, req.body.Address, req.body.Sex, req.body.Martial]; //["Kathir","Mdu","Male","Single"];
     const q2 = "INSERT INTO salary (`Dep`,`Amount`) Values (?)"; //["UI/UX",5000];
     const val2 = [req.body.Dep, req.body.Amount];
   
@@ -102,6 +101,7 @@ app.post("/add", (req, res) => {
     });
   })
 
-app.listen("3000",()=>{
+app.listen(process.env.Port || PORT ,()=>{
     console.log("Connected to server");
+    console.log(db)
 })
